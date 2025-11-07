@@ -38,10 +38,6 @@ export default function TicketDashboard() {
         sortField={sortField}
         sortOrder={sortOrder}
         handleSort={handleSort}
-        page={page}
-        totalPages={totalPages}
-        nextPage={nextPage}
-        prevPage={prevPage}
       />
     </MainLayout>
   );
