@@ -1,18 +1,15 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
+import TicketDashboard from "./modules/tickets/pages/TicketDashboard";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <nav style={{padding: 10}}>
-        <Link to="/">Home</Link>{" | "}
-        <Link to="/dashboard">Dashboard</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      {/* Página principal */}
+      <Route path="/" element={<Home />} />
+
+      {/* Módulo de tickets */}
+      <Route path="/tickets" element={<TicketDashboard />} />
+    </Routes>
   );
 }

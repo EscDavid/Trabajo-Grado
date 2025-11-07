@@ -17,7 +17,7 @@ export const createTicketDB = async (clientId, subject, problemDescription) => {
 };
 
 // Obtener lista de tickets con orden dinámico
-export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20 } = {}) => {
+export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20, offset = 0 } = {}) => {
   let query = `
     SELECT 
       t.id, 
@@ -31,18 +31,13 @@ export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20 } 
 
   const allowedFields = ["created_at", "subject", "status", "client"];
   const allowedOrders = ["asc", "desc"];
-
-  // Validaciones
   const safeSortField = allowedFields.includes(sortField) ? sortField : "created_at";
   const safeSortOrder = allowedOrders.includes(sortOrder?.toLowerCase()) ? sortOrder.toUpperCase() : "ASC";
-
-  // Mapeo al campo real de la tabla
   const orderField = safeSortField === "client" ? "c.name" : `t.${safeSortField}`;
-  query += ` ORDER BY ${orderField} ${safeSortOrder}`;
 
-  query += " LIMIT ?";
-  const [rows] = await db.query(query, [parseInt(limit, 10)]);
+  query += ` ORDER BY ${orderField} ${safeSortOrder} LIMIT ? OFFSET ?`;
 
+  const [rows] = await db.query(query, [parseInt(limit, 10), parseInt(offset, 10)]);
   return rows;
 };
 

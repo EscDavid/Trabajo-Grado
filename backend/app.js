@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import healthRoutes from "./modules/health/health.routes.js";
 import ticketRoutes from "./modules/tickets/ticket.routes.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 dotenv.config();
 const app = express();
 
@@ -16,6 +17,10 @@ app.get("/", (req, res) => {
   res.json({ message: "API MVP ISP - backend activo" });
 });
 
+app.use(errorHandler);
+
 export default app;
+
+
 
 
