@@ -29,90 +29,90 @@ export default function MainLayout({ children }) {
 
       {/* Sidebar - ANCHO AMPLIADO A 450px */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-[450px] bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        }`}
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-[250px] bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          }`}
       >
-        <div className="p-10">
+        <div className="p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-4xl">D</span>
+              <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-21">D</span>
               </div>
-              <span className="font-bold text-4xl">Dabang</span>
+              <span className="font-bold text-l">Dabang</span>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden text-gray-500 hover:text-gray-700"
             >
-              <X size={37} />
+              <X size={20} />
             </button>
           </div>
         </div>
 
         {/* Navigation - PADDING AUMENTADO */}
-        <nav className="flex-1 px-10 space-y-6 overflow-y-auto">
-          <SidebarItem 
-            icon={<Home size={48} />} 
-            label="Dashboard" 
-            to="/" 
-            onClick={() => setSidebarOpen(false)} 
+        <nav className="flex-1 px-3 space-y-3 overflow-y-auto">
+          <SidebarItem
+            icon={<Home size={20} />}
+            label="Dashboard"
+            to="/"
+            onClick={() => setSidebarOpen(false)}
           />
-          <SidebarItem 
-            icon={<ShoppingCart size={48} />} 
-            label="Facturación" 
-            onClick={() => setSidebarOpen(false)} 
+          <SidebarItem
+            icon={<ShoppingCart size={20} />}
+            label="Facturación"
+            onClick={() => setSidebarOpen(false)}
           />
-          
-          <SidebarItem 
-            icon={<BarChart3 size={48} />} 
-            label="Administración" 
+
+          <SidebarItem
+            icon={<BarChart3 size={20} />}
+            label="Administración"
             subtitle="CLTES"
-            onClick={() => setSidebarOpen(false)} 
+            onClick={() => setSidebarOpen(false)}
           />
-          <SidebarItem 
-            icon={<Package size={48} />} 
-            label="Equipos" 
-            onClick={() => setSidebarOpen(false)} 
+          <SidebarItem
+            icon={<Package size={20} />}
+            label="Equipos"
+            onClick={() => setSidebarOpen(false)}
           />
-          <SidebarItem 
-            icon={<TrendingUp size={48} />} 
-            label="Mapeo de red" 
-            onClick={() => setSidebarOpen(false)} 
+          <SidebarItem
+            icon={<TrendingUp size={20} />}
+            label="Mapeo de red"
+            onClick={() => setSidebarOpen(false)}
           />
-          <SidebarItem 
-            icon={<Ticket size={48} />} 
-            label="Tickets" 
-            to="/tickets" 
-            active 
-            onClick={() => setSidebarOpen(false)} 
+          <SidebarItem
+            icon={<Ticket size={20} />}
+            label="Tickets"
+            to="/tickets"
+            active
+            onClick={() => setSidebarOpen(false)}
           />
-          <SidebarItem 
-            icon={<Settings size={48} />} 
-            label="Settings" 
-            onClick={() => setSidebarOpen(false)} 
+          <SidebarItem
+            icon={<Settings size={20} />}
+            label="Settings"
+            onClick={() => setSidebarOpen(false)}
           />
-          <SidebarItem 
-            icon={<LogOut size={48} />} 
-            label="Sign Out" 
-            onClick={() => setSidebarOpen(false)} 
+          <SidebarItem
+            icon={<LogOut size={20} />}
+            label="Sign Out"
+            onClick={() => setSidebarOpen(false)}
           />
         </nav>
 
         {/* User Profile */}
-        <div className="p-8 border-t border-gray-200">
-          <div className="flex items-center gap-5">
+        <div className="p-3 border-t border-gray-200">
+          <div className="flex items-center gap-3">
             <img
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
               alt="User"
-              className="w-16 h-16 rounded-full"
+              className="w-9 h-9 rounded-full"
             />
-            <div className="flex-1">
-              <div className="text-xl font-semibold">Fabian</div>
-              <div className="text-lg text-gray-500">Admin</div>
+            <div className="flex-1 leading-tight">
+              <div className="text-sm font-medium">Fabian</div>
+              <div className="text-xs text-gray-500">Admin</div>
             </div>
           </div>
         </div>
+
       </aside>
 
       {/* Contenido principal */}
@@ -129,7 +129,7 @@ export default function MainLayout({ children }) {
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">D</span>
             </div>
-            <span className="font-bold text-2xl">Dabang</span>
+            <span className="font-bold text-1xl">Dabang</span>
           </div>
         </header>
 
@@ -143,25 +143,27 @@ export default function MainLayout({ children }) {
 const SidebarItem = ({ icon, label, subtitle, to, active, onClick }) => {
   const content = (
     <div
-      className={`flex items-center gap-5 px-5 py-4 rounded-lg cursor-pointer transition-colors ${
-        active
+      className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors ${active
           ? "bg-indigo-600 text-white"
           : "text-gray-700 hover:bg-gray-50"
-      }`}
+        }`}
       onClick={onClick}
     >
-      <span className={active ? "text-white" : "text-gray-600"}>{icon}</span>
-      {label && (
-        <div>
-          {/* CORREGIDO: text-4xl en lugar de text-4x1 */}
-          <div className="text-2xl font-semibold">{label}</div>
-          {subtitle && (
-            <div className={`text-lg ${active ? "text-indigo-200" : "text-gray-500"}`}>
-              {subtitle}
-            </div>
-          )}
-        </div>
-      )}
+      <span className={`${active ? "text-white" : "text-gray-600"}`}>
+        {icon}
+      </span>
+
+      <div className="leading-tight">
+        <div className="text-sm font-medium">{label}</div>
+        {subtitle && (
+          <div
+            className={`text-xs ${active ? "text-indigo-200" : "text-gray-500"
+              }`}
+          >
+            {subtitle}
+          </div>
+        )}
+      </div>
     </div>
   );
 
