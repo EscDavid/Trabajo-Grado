@@ -1,11 +1,11 @@
-// src/main.jsx
+// src/modules/tickets/TicketFormMain.jsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
+import TicketWrapper from "./components/TicketWrapper";
+import "./index.css"; // si necesitas estilos globales
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <TicketWrapper />
   </React.StrictMode>
 );

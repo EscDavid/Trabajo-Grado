@@ -1,35 +1,42 @@
 import { db } from "../../config/db.js";
 
+
 // Buscar cliente por correo
 export const findClientByEmail = async (email) => {
-  const [rows] = await db.query("SELECT id FROM clients WHERE email = ?", [email]);
+  const [rows] = await db.query("SELECT id, zone FROM clients WHERE email = ?", [email]);
   return rows[0] || null;
 };
 
 // Crear ticket
-export const createTicketDB = async (clientId, subject, problemDescription) => {
+export const createTicketDB = async (clientId, subject, problemDescription,zone) => {
   const [result] = await db.query(
-    `INSERT INTO tickets (client_id, subject, problem_description)
-     VALUES (?, ?, ?)`,
-    [clientId, subject, problemDescription]
+    `INSERT INTO tickets (client_id, subject, problem_description,zone)
+     VALUES (?, ?, ?, ?)`,
+    [clientId, subject, problemDescription,zone]
   );
   return result.insertId;
 };
 
 // Obtener lista de tickets con orden dinámico
-export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20, offset = 0 } = {}) => {
+export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20, offset = 0, countOnly = false } = {}) => {
+  if (countOnly) {
+    const [rows] = await db.query("SELECT COUNT(*) AS count FROM tickets");
+    return rows[0].count;
+  }
+
   let query = `
     SELECT 
       t.id, 
       c.name AS client, 
       t.subject, 
-      t.status, 
+      t.status,
+      t.zone, 
       t.created_at
     FROM tickets t
     INNER JOIN clients c ON t.client_id = c.id
   `;
 
-  const allowedFields = ["created_at", "subject", "status", "client"];
+  const allowedFields = ["created_at", "subject", "status", "client", "zone"];
   const allowedOrders = ["asc", "desc"];
   const safeSortField = allowedFields.includes(sortField) ? sortField : "created_at";
   const safeSortOrder = allowedOrders.includes(sortOrder?.toLowerCase()) ? sortOrder.toUpperCase() : "ASC";
@@ -40,6 +47,7 @@ export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20, o
   const [rows] = await db.query(query, [parseInt(limit, 10), parseInt(offset, 10)]);
   return rows;
 };
+
 
 // Obtener ticket por ID
 export const getTicketByIdDB = async (id) => {

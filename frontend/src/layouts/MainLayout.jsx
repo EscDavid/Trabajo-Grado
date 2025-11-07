@@ -134,7 +134,10 @@ export default function MainLayout({ children }) {
         </header>
 
         {/* Contenido */}
-        <main className="flex-1 overflow-auto p-4 lg:p-6">{children}</main>
+        <main className="flex-1 overflow-auto pt-2 pb-4 px-4 lg:pt-2 lg:pb-4 lg:px-4">
+          {children}
+        </main>
+
       </div>
     </div>
   );
@@ -144,8 +147,8 @@ const SidebarItem = ({ icon, label, subtitle, to, active, onClick }) => {
   const content = (
     <div
       className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors ${active
-          ? "bg-indigo-600 text-white"
-          : "text-gray-700 hover:bg-gray-50"
+        ? "bg-indigo-600 text-white"
+        : "text-gray-700 hover:bg-gray-50"
         }`}
       onClick={onClick}
     >

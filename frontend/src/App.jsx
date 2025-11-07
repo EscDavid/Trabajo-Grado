@@ -1,15 +1,17 @@
-import { Routes, Route } from "react-router-dom";
+// src/App.jsx
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import TicketDashboard from "./modules/tickets/pages/TicketDashboard";
+import TicketFormWrapper from "./modules/tickets/components/TicketWrapper";
 
 export default function App() {
   return (
-    <Routes>
-      {/* Página principal */}
-      <Route path="/" element={<Home />} />
-
-      {/* Módulo de tickets */}
-      <Route path="/tickets" element={<TicketDashboard />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/tickets" replace />} />
+        <Route path="/tickets" element={<TicketDashboard />} />
+        <Route path="/crear-ticket" element={<TicketFormWrapper />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

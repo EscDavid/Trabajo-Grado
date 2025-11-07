@@ -1,10 +1,7 @@
-import { 
-  findClientByEmail, 
-  createTicketDB, 
-  getTicketsFilteredDB, 
-  getTicketByIdDB, 
-  updateTicketDB 
-} from "./ticket.model.js";
+import { findClientByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, updateTicketDB } from "./ticket.model.js";
+
+
+
 
 // Crear ticket
 export const crearTicket = async (req, res) => {
@@ -24,18 +21,29 @@ export const crearTicket = async (req, res) => {
 // Obtener lista de tickets con filtro dinámico
 export const obtenerTicketsDashboard = async (req, res) => {
   try {
-    const { sortField, sortOrder, limit } = req.query;
-    const tickets = await getTicketsFilteredDB({
-      sortField,
-      sortOrder,
-      limit: limit ? parseInt(limit, 10) : 20
-    });
-    res.json(tickets);
-  } catch (error) {
-    console.error("Error en obtenerTicketsDashboard:", error);
-    res.status(500).json({ error: "Error al obtener tickets del dashboard" });
+    const { page = 1, limit = 10, sortField = "created_at", sortOrder = "asc" } = req.query;
+
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    const offset = (pageNum - 1) * limitNum;
+
+    // Llamada al model que hace el query
+    const tickets = await getTicketsFilteredDB({ sortField, sortOrder, limit: limitNum, offset });
+
+    // Contar total de registros
+    const totalRecords = await getTicketsFilteredDB({ sortField: "id", sortOrder: "asc", limit: 1, offset: 0, countOnly: true });
+
+    // Calcular total de páginas
+    const totalPages = Math.ceil(totalRecords / limitNum);
+
+    res.json({ tickets, totalRecords, totalPages });
+  } catch (err) {
+    console.error("Error en tickets/dashboard:", err);
+    res.status(500).json({ message: "Error al obtener tickets" });
   }
 };
+
+
 
 export const obtenerTicketPorId = async (req, res) => {
   try {

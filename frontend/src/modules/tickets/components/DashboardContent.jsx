@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
-export default function DashboardContent({ tickets, sortField, sortOrder, handleSort }) {
+
+export default function DashboardContent({
+  tickets,
+  sortField,
+  sortOrder,
+  handleSort,
+  page,
+  setPage,
+  totalPages,
+  perPage,
+  setPerPage,
+  totalRecords,
+}) {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const handleTableSort = (key) => {
     let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
+    if (sortConfig.key === key && sortConfig.direction === "asc") direction = "desc";
     setSortConfig({ key, direction });
 
-    if (key === "status") handleSort("status");
-    else if (key === "client") handleSort("client");
-    else if (key === "zone") handleSort("zone");
-    else if (key === "creation") handleSort("created_at");
-    else if (key === "subject") handleSort("subject");
+    handleSort(key === "creation" ? "created_at" : key);
   };
 
   const SortableHeader = ({ label, sortKey }) => (
@@ -23,18 +29,18 @@ export default function DashboardContent({ tickets, sortField, sortOrder, handle
       className="px-3 py-1 text-left text-sm font-medium text-gray-500 cursor-pointer hover:bg-gray-100 transition-colors"
       onClick={() => handleTableSort(sortKey)}
     >
-      <div className="flex items-center justify-between w-full leading-tight">
+      <div className="flex items-center justify-between w-full">
         <span>{label}</span>
         <div className="flex flex-col">
           <ChevronUp
-            size={18}
+            size={16}
             className={`-mb-1 ${sortConfig.key === sortKey && sortConfig.direction === "asc"
               ? "text-indigo-600"
               : "text-gray-400"
               }`}
           />
           <ChevronDown
-            size={18}
+            size={16}
             className={`-mt-1 ${sortConfig.key === sortKey && sortConfig.direction === "desc"
               ? "text-indigo-600"
               : "text-gray-400"
@@ -45,99 +51,137 @@ export default function DashboardContent({ tickets, sortField, sortOrder, handle
     </th>
   );
 
-  const mappedTickets = tickets.map((t) => ({
-    id: t.id,
-    status: t.status || "Abierto",
-    client: t.client || "N/A",
-    zone: "Norte",
-    creation: new Date(t.created_at).toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }),
-    subject: t.subject || "Sin asunto",
-  }));
-
   return (
-    <div className="flex-1 overflow-auto">
-      <div className="p-4 text-sm">
-        <div className="mb-4">
-          <h2 className="text-xs font-semibold text-gray-800">Tickets</h2>
+    <div className="flex-1 overflow-auto p-4 text-sm">
+      <div className="mb-4">
+        <h2 className="text-xs font-semibold text-gray-800">Tickets</h2>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <TicketsBySectorChart />
+        <MonthlyComparisonChart />
+      </div>
+
+      {/* ---------- Tabla de Tickets ---------- */}
+      <div className="bg-white rounded-lg shadow-sm">
+        <div className="px-4 py-2 border-b border-gray-200">
+          <h3 className="font-semibold text-gray-800">Tickets</h3>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-          <TicketsBySectorChart />
-          <MonthlyComparisonChart />
-        </div>
-
-        <TicketsTable tickets={mappedTickets} SortableHeader={SortableHeader} />
-      </div>
-    </div>
-  );
-}
-
-// ---------------- Tickets Table ----------------
-function TicketsTable({ tickets, SortableHeader }) {
-  const getStatusBadge = (status) => {
-    const s = status?.toLowerCase() || "";
-    if (s.includes("abierto")) return "bg-green-100 text-green-800";
-    if (s.includes("proceso")) return "bg-yellow-100 text-yellow-800";
-    if (s.includes("cerrado")) return "bg-gray-100 text-gray-800";
-    return "bg-blue-100 text-blue-800";
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm">
-      <div className="px-4 py-2 border-b border-gray-200">
-        <h3 className="font-semibold text-gray-800 ">Tickets</h3>
-      </div>
-      <table className="w-full text-sm">
-        <thead className="bg-gray-50 border-b border-gray-200">
-          <tr>
-            <SortableHeader label="Estatus" sortKey="status" />
-            <SortableHeader label="Cliente" sortKey="client" />
-            <SortableHeader label="Zona" sortKey="zone" />
-            <SortableHeader label="Creación" sortKey="creation" />
-            <SortableHeader label="Asunto" sortKey="subject" />
-          </tr>
-        </thead>
-        <tbody>
-          {tickets.length ? (
-            tickets.map((ticket) => (
-              <tr
-                key={ticket.id}
-                className="border-b border-gray-100 hover:bg-gray-50"
-              >
-                <td className="px-3 py-2">
-                  <span className={`px-1 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(ticket.status)}`}>
-                    {ticket.status}
-                  </span>
-                </td>
-                <td className="px-3 py-2 text-gray-800">{ticket.client}</td>
-                <td className="px-3 py-2 text-gray-600">{ticket.zone}</td>
-                <td className="px-3 py-2 text-gray-600">{ticket.creation}</td>
-                <td className="px-3 py-2 text-gray-600">{ticket.subject}</td>
-              </tr>
-            ))
-          ) : (
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <td colSpan="5" className="text-center py-4 text-xs text-gray-400">
-                No hay tickets disponibles
-              </td>
+              <SortableHeader label="Estatus" sortKey="status" />
+              <SortableHeader label="Cliente" sortKey="client" />
+              <SortableHeader label="Asunto" sortKey="subject" />
+              <SortableHeader label="Zona" sortKey="zone" />
+              <SortableHeader label="Creación" sortKey="creation" />
             </tr>
+          </thead>
+          <tbody>
+            {tickets.length ? (
+              tickets.map((ticket) => (
+                <tr key={ticket.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="px-3 py-2">
+                    <span
+                      className={`px-1 py-0.5 rounded-full text-xs font-medium ${
+                        ticket.status.toLowerCase().includes("abierto")
+                          ? "bg-green-100 text-green-800"
+                          : ticket.status.toLowerCase().includes("proceso")
+                          ? "bg-yellow-100 text-yellow-800"
+                          : ticket.status.toLowerCase().includes("cerrado")
+                          ? "bg-gray-100 text-gray-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {ticket.status}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 text-gray-800">{ticket.client}</td>
+                  <td className="px-3 py-2 text-gray-600">{ticket.subject}</td>
+                  <td className="px-3 py-2 text-gray-600">{ticket.zone}</td>
+                  <td className="px-3 py-2 text-gray-600">{ticket.creation}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center py-4 text-xs text-gray-400">
+                  No hay tickets disponibles
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        {/* ---------- Paginación y selector de registros ---------- */}
+        <div className="px-4 py-2 border-t border-gray-200 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Mostrar:</label>
+            <select
+              className="border border-gray-300 rounded px-2 py-1 text-sm"
+              value={perPage}
+              onChange={(e) => {
+                setPerPage(Number(e.target.value));
+                setPage(1);
+              }}
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+
+          <div className="text-sm text-gray-600">
+            Mostrando registros del {(page - 1) * perPage + 1} al{" "}
+            {Math.min(page * perPage, totalRecords)} de {totalRecords} registros
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center gap-2">
+              <button
+                className="px-2 py-1 border rounded text-sm hover:bg-gray-50"
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+              >
+                Anterior
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`px-2 py-1 border rounded text-sm ${
+                    page === p ? "bg-indigo-600 text-white border-indigo-600" : "border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              <button
+                className="px-2 py-1 border rounded text-sm hover:bg-gray-50"
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+              >
+                Siguiente
+              </button>
+            </div>
           )}
-        </tbody>
-      </table>
+        </div>
+      </div>
     </div>
   );
 }
+
+
+
 
 // ---------------- Tickets By Sector Chart ----------------
 function TicketsBySectorChart() {
   return (
     <div className="bg-white rounded-lg shadow-sm p-4">
-      <h3 className="font-semibold text-base mb-4 text-gray-800">Tickets por sector</h3>
-      <div className="relative" style={{ height: "200px" }}>
+      <h3 className="font-semibold text-base mb-4 text-gray-800">Tickets por Zona</h3>
+      <div className="relative" style={{ height: "180px" }}>
         <svg width="100%" height="100%" viewBox="0 0 400 250" preserveAspectRatio="none">
           <line x1="0" y1="200" x2="400" y2="200" stroke="#f0f0f0" strokeWidth="1" />
           <line x1="0" y1="150" x2="400" y2="150" stroke="#f0f0f0" strokeWidth="1" />
@@ -172,7 +216,7 @@ function MonthlyComparisonChart() {
   return (
     <div className="bg-white rounded-lg shadow-sm p-4">
       <h3 className="font-semibold text-base mb-4 text-gray-800">Comparación mensual</h3>
-      <div className="relative" style={{ height: "200px" }}>
+      <div className="relative" style={{ height: "180px" }}>
         <svg width="100%" height="100%" viewBox="0 0 400 250" preserveAspectRatio="none">
           <defs>
             <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0" y2="100%">

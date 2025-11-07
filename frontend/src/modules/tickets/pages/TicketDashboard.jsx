@@ -8,16 +8,33 @@ export default function TicketDashboard() {
   const [sortField, setSortField] = useState("created_at");
   const [sortOrder, setSortOrder] = useState("asc");
   const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10); // Registros por página
   const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getTickets({ sortField, sortOrder, page });
-      setTickets(data.tickets || data);
+      const data = await getTickets({ sortField, sortOrder, page, perPage });
+       // Mapear tickets para la tabla
+       const mappedTickets = data.tickets.map(t => ({
+        id: t.id,
+        client: t.client,  
+        subject: t.subject || "Sin asunto",
+        status: t.status || "Abierto",
+        zone: t.zone || "N/A",
+        creation: new Date(t.created_at).toLocaleDateString("es-ES", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+      }));
+
+      setTickets(mappedTickets);
       setTotalPages(data.totalPages || 1);
+      setTotalRecords(data.totalRecords || (data.tickets?.length || 0));
     };
     fetchData();
-  }, [sortField, sortOrder, page]);
+  }, [sortField, sortOrder, page, perPage]);
 
   const handleSort = (field) => {
     if (field === sortField) {
@@ -26,10 +43,8 @@ export default function TicketDashboard() {
       setSortField(field);
       setSortOrder("asc");
     }
+    setPage(1); // Reiniciar página al cambiar sort
   };
-
-  const nextPage = () => page < totalPages && setPage(page + 1);
-  const prevPage = () => page > 1 && setPage(page - 1);
 
   return (
     <MainLayout>
@@ -38,6 +53,12 @@ export default function TicketDashboard() {
         sortField={sortField}
         sortOrder={sortOrder}
         handleSort={handleSort}
+        page={page}
+        setPage={setPage}
+        totalPages={totalPages}
+        perPage={perPage}
+        setPerPage={setPerPage}
+        totalRecords={totalRecords}
       />
     </MainLayout>
   );
