@@ -1,10 +1,14 @@
 import { Router } from "express";
-import { crearTicket, obtenerTickets, actualizarTicket } from "./ticket.controller.js";
+import { 
+  crearTicket, 
+  obtenerTicketsDashboard, 
+  obtenerTicketPorId,
+  actualizarTicket
+} from "./ticket.controller.js";
 
 const router = Router();
-
-router.get("/", obtenerTickets);        // Técnico o Admin
-router.post("/", crearTicket);          // Recepción / Usuario
-router.put("/:id", actualizarTicket);   // Técnico actualiza solución y estado
-
+router.get("/dashboard", obtenerTicketsDashboard);
+router.post("/", crearTicket);
+router.put("/:id", actualizarTicket);
+router.get("/:id", obtenerTicketPorId);
 export default router;
