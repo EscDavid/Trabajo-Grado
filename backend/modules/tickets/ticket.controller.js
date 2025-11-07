@@ -10,12 +10,16 @@ export const crearTicket = async (req, res) => {
     const client = await findClientByEmail(correoCliente);
     if (!client) return res.status(404).json({ error: "El cliente no existe en la base de datos." });
 
-    const ticketId = await createTicketDB(client.id, asunto, descripcionProblema);
+    const ticketId = await createTicketDB(client.id, asunto, descripcionProblema, client.zone);
     res.status(201).json({ message: "Ticket creado con éxito", ticketId });
+    
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al crear el ticket" });
+    console.error("💥 Error al crear ticket:", error); // Log interno completo
+    res.status(500).json({
+      error: "Error interno del servidor. Intente más tarde."
+    });
   }
+  
 };
 
 // Obtener lista de tickets con filtro dinámico

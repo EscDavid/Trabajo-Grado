@@ -9,7 +9,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/tickets" replace />} />
-        <Route path="/tickets" element={<TicketDashboard />} />
+        <Route path="/tickets/dashboard" element={<TicketDashboard />} />
         <Route path="/crear-ticket" element={<TicketFormWrapper />} />
       </Routes>
     </BrowserRouter>
