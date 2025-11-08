@@ -9,6 +9,7 @@ const create = async (req, res) => {
       "email",
       "billing_address",
       "registration_date",
+      "zone", // <--- OBLIGATORIO ELEGIR ZONA
     ];
 
     for (const field of requiredFields) {
@@ -21,8 +22,8 @@ const create = async (req, res) => {
 
     const [result] = await db.query(
       `INSERT INTO customers 
-        (first_name, last_name, email, phone_primary, phone_secondary, document_type, document_number, billing_address, service_address, registration_date, status, notes)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (first_name, last_name, email, phone_primary, phone_secondary, document_type, document_number, billing_address, service_address, registration_date, status, notes, zone)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         req.body.first_name,
         req.body.last_name,
@@ -36,6 +37,7 @@ const create = async (req, res) => {
         req.body.registration_date,
         req.body.status || "pending_activation",
         req.body.notes || null,
+        req.body.zone, // <--- ESTE ES EL NUEVO VALOR
       ]
     );
 

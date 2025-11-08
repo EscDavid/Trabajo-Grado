@@ -37,7 +37,7 @@ export default function CustomersTable({ onEdit, onView }) {
   if (loading) return <p className="text-sm text-gray-500">Cargando clientes...</p>;
 
   return (
-<div className="w-[98%] mx-auto mt-2"> 
+<div className="w-[98%] mx-auto mt-2">
   <table className="w-full text-[13px] text-gray-700">
 
     <thead className="bg-gray-50 border-b border-gray-200">
@@ -49,7 +49,8 @@ export default function CustomersTable({ onEdit, onView }) {
         <th className="px-3 py-2 text-left font-medium">Documento</th>
         <th className="px-3 py-2 text-left font-medium">Direcciones</th>
         <th className="px-3 py-2 text-left font-medium">Notas</th>
-        <th className="px-3 py-2 text-left font-medium">Portal</th>
+        <th className="px-3 py-2 text-left font-medium">Zona</th>  {/* NUEVO */}
+        <th className="px-3 py-2 text-left font-medium">Usuario</th>
         <th className="px-3 py-2 text-left font-medium">Acciones</th>
       </tr>
     </thead>
@@ -72,15 +73,22 @@ export default function CustomersTable({ onEdit, onView }) {
                 {c.status}
               </span>
             </td>
+
             <td className="px-3 py-2">{c.first_name} {c.last_name}</td>
             <td className="px-3 py-2">{c.email}</td>
             <td className="px-3 py-2">{c.phone_primary}</td>
             <td className="px-3 py-2">{c.document_type}: {c.document_number}</td>
+
             <td className="px-3 py-2 text-xs">
               <div>F: {c.billing_address}</div>
               <div>S: {c.service_address}</div>
             </td>
+
             <td className="px-3 py-2 text-xs">{c.notes || "-"}</td>
+
+            {/* NUEVA COLUMNA */}
+            <td className="px-3 py-2 text-xs">{c.zone || "-"}</td>
+
             <td className="px-3 py-2 text-xs">{c.user_id || "-"}</td>
 
             <td className="px-3 py-2">
@@ -109,7 +117,7 @@ export default function CustomersTable({ onEdit, onView }) {
         ))
       ) : (
         <tr>
-          <td colSpan="9" className="text-center py-4 text-sm text-gray-400">
+          <td colSpan="10" className="text-center py-4 text-sm text-gray-400">
             No hay clientes disponibles
           </td>
         </tr>
