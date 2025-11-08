@@ -1,4 +1,4 @@
-const { pool } = require("./db.js"); // Conexión MySQL
+import { db } from "../../config/db.js";
 
 // Crear un nuevo cliente
 const create = async (req, res) => {
@@ -19,7 +19,7 @@ const create = async (req, res) => {
       }
     }
 
-    const [result] = await pool.query(
+    const [result] = await db.query(
       `INSERT INTO customers 
         (first_name, last_name, email, phone_primary, phone_secondary, document_type, document_number, billing_address, service_address, registration_date, status, notes)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -55,7 +55,7 @@ const create = async (req, res) => {
 // Obtener todos los clientes
 const findAll = async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM customers ORDER BY id DESC");
+    const [rows] = await db.query("SELECT * FROM customers ORDER BY id DESC");
     res.json(rows);
   } catch (error) {
     console.error("❌ Error al obtener clientes:", error);
@@ -66,7 +66,7 @@ const findAll = async (req, res) => {
 // Obtener un cliente por ID
 const findOne = async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM customers WHERE id = ?", [
+    const [rows] = await db.query("SELECT * FROM customers WHERE id = ?", [
       req.params.id,
     ]);
 
@@ -84,7 +84,7 @@ const findOne = async (req, res) => {
 // Actualizar un cliente
 const update = async (req, res) => {
   try {
-    const [result] = await pool.query("UPDATE customers SET ? WHERE id = ?", [
+    const [result] = await db.query("UPDATE customers SET ? WHERE id = ?", [
       req.body,
       req.params.id,
     ]);
@@ -109,7 +109,7 @@ const changeStatus = async (req, res) => {
     if (!status)
       return res.status(400).json({ message: "Debe proporcionar un estado." });
 
-    const [result] = await pool.query(
+    const [result] = await db.query(
       "UPDATE customers SET status = ? WHERE id = ?",
       [status, req.params.id]
     );
@@ -129,7 +129,7 @@ const changeStatus = async (req, res) => {
 // Borrado lógico (cambia estado a 'cancelled')
 const remove = async (req, res) => {
   try {
-    const [result] = await pool.query(
+    const [result] = await db.query(
       "UPDATE customers SET status = 'cancelled' WHERE id = ?",
       [req.params.id]
     );
@@ -145,11 +145,4 @@ const remove = async (req, res) => {
 };
 
 // Exportación para CommonJS
-module.exports = {
-  create,
-  findAll,
-  findOne,
-  update,
-  changeStatus,
-  delete: remove,
-};
+export { create, findAll, findOne, update, changeStatus, remove as delete };

@@ -1,11 +1,11 @@
-const app = require("./app.js");
-const { pool } = require("./modules/customers/db.js");
+import app from "./app.js";
+import { db } from "./config/db.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
-    const connection = await pool.getConnection();
+    const connection = await db.getConnection();
     console.log("✅ Conectado correctamente a la base de datos MySQL.");
     connection.release();
 

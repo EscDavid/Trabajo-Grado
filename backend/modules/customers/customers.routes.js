@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const customerController = require("./customers.controller.js");
+import { Router } from "express";
+const router = Router();
+import * as customerController from "./customers.controller.js";
 
 // Crear un nuevo cliente
 router.post("/", customerController.create);
@@ -20,4 +20,4 @@ router.patch("/:id/status", customerController.changeStatus);
 // Eliminar (borrado lógico) un cliente
 router.delete("/:id", customerController.delete);
 
-module.exports = router;
+export default router;
