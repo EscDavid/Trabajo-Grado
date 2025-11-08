@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 export default function TicketForm({ onSubmit }) {
   const [formData, setFormData] = useState({
-    correoCliente: '',
-    asunto: '',
-    descripcionProblema: ''
+    email: "",
+    subject: "",
+    problemDescription: "",
   });
 
   const handleSubmit = (e) => {
@@ -29,24 +29,29 @@ export default function TicketForm({ onSubmit }) {
         <form onSubmit={handleSubmit} className="space-y-4 flex flex-col items-center">
           <input
             type="email"
-            value={formData.correoCliente}
-            onChange={(e) => setFormData({ ...formData, correoCliente: e.target.value })}
-            placeholder="Correo del cliente Titular"
+            name="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="Client Email"
             className="w-full max-w-[645px] h-full max-h-[40px] px-5 py-3 border border-gray-400 rounded-xl outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-300 text-sm bg-white"
             required
           />
+
           <input
             type="text"
-            value={formData.asunto}
-            onChange={(e) => setFormData({ ...formData, asunto: e.target.value })}
-            placeholder="Asunto"
+            name="subject"
+            value={formData.subject}
+            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+            placeholder="Subject"
             className="w-full max-w-[645px] h-full max-h-[40px] px-5 py-3 border border-gray-400 rounded-xl outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-300 text-sm bg-white"
             required
           />
+
           <textarea
-            value={formData.descripcionProblema}
-            onChange={(e) => setFormData({ ...formData, descripcionProblema: e.target.value })}
-            placeholder="Descripción del problema..."
+            name="problemDescription"
+            value={formData.problemDescription}
+            onChange={(e) => setFormData({ ...formData, problemDescription: e.target.value })}
+            placeholder="Problem description..."
             rows={6}
             className="w-full max-w-[645px] h-full max-h-[200px] px-5 py-3 border border-gray-400 rounded-xl outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-300 text-sm resize-none bg-white"
             required

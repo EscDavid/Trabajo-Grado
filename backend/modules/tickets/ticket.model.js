@@ -1,5 +1,5 @@
 import { db } from "../../config/db.js";
-
+import { logger } from "../../config/logger.js";
 
 // Buscar cliente por correo
 export const findClientByEmail = async (email) => {
@@ -18,7 +18,7 @@ export const createTicketDB = async (clientId, subject, problemDescription,zone)
 };
 
 // Obtener lista de tickets con orden dinámico
-export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20, offset = 0, countOnly = false } = {}) => {
+export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 10, offset = 0, countOnly = false } = {}) => {
   if (countOnly) {
     const [rows] = await db.query("SELECT COUNT(*) AS count FROM tickets");
     return rows[0].count;
@@ -52,10 +52,11 @@ export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 20, o
 // Obtener ticket por ID
 export const getTicketByIdDB = async (id) => {
   const [rows] = await db.query(
-    `SELECT t.id, c.name AS client, c.email, t.technician_id, t.subject, t.problem_description, 
-            t.status, t.solution_description, t.created_at, t.closed_at
+    `SELECT t.id, c.name AS client, t.subject, t.problem_description, 
+            t.status, t.zone, t.solution_description, t.created_at, t.closed_at, u.name AS technician_name
      FROM tickets t
      INNER JOIN clients c ON t.client_id = c.id
+     LEFT JOIN users u ON t.technician_id = u.id
      WHERE t.id = ?`,
     [id]
   );
