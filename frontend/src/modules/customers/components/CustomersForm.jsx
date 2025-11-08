@@ -14,7 +14,7 @@ export default function CustomerForm({ initialData, onSuccess }) {
     billing_address: "",
     service_address: "",
     registration_date: "",
-    status: "activo",
+    status: "pending_activation", // ✅ Estado inicial correcto
     notes: "",
     user_id: "",
   });
@@ -22,7 +22,10 @@ export default function CustomerForm({ initialData, onSuccess }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (initialData) setForm(initialData);
+    if (initialData) {
+      // ✅ No sobrescribimos todo, solo mezclamos datos existentes
+      setForm((prev) => ({ ...prev, ...initialData }));
+    }
   }, [initialData]);
 
   const handleChange = (e) => {
@@ -65,11 +68,17 @@ export default function CustomerForm({ initialData, onSuccess }) {
         <input name="document_number" placeholder="Número de documento" value={form.document_number} onChange={handleChange} required />
         <input name="billing_address" placeholder="Dirección de facturación" value={form.billing_address} onChange={handleChange} />
         <input name="service_address" placeholder="Dirección del servicio" value={form.service_address} onChange={handleChange} />
-        <input type="date" name="registration_date" value={form.registration_date} onChange={handleChange} />
+
+        {/* ✅ Lista de estados completa */}
         <select name="status" value={form.status} onChange={handleChange}>
-          <option value="activo">Activo</option>
-          <option value="inactivo">Inactivo</option>
+          <option value="pending_activation">Pendiente de Activación</option>
+          <option value="active">Activo</option>
+          <option value="suspended_nonpayment">Suspendido por Falta de Pago</option>
+          <option value="suspended_admin">Suspendido por Admin</option>
+          <option value="delinquent">Moroso</option>
+          <option value="cancelled">Cancelado</option>
         </select>
+
         <textarea name="notes" placeholder="Notas" value={form.notes} onChange={handleChange}></textarea>
         <input name="user_id" placeholder="ID Usuario (Portal)" value={form.user_id} onChange={handleChange} />
       </div>

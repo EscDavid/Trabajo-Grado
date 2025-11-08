@@ -82,8 +82,13 @@ const findOne = async (req, res) => {
 };
 
 // Actualizar un cliente
+// Actualizar un cliente
 const update = async (req, res) => {
   try {
+    // ⛔ Bloquear que entren estas fechas desde el frontend
+    delete req.body.created_at;
+    delete req.body.updated_at;
+
     const [result] = await db.query("UPDATE customers SET ? WHERE id = ?", [
       req.body,
       req.params.id,
