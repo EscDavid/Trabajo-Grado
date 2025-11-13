@@ -74,7 +74,7 @@ export default function MainLayout({ children }) {
           <SidebarItem
             icon={<BarChart3 size={20} />}
             label="Administración"
-            subtitle="CLIENTES"
+            subtitle="USUARIOS"
             active={location.pathname.startsWith("/admin")}
             onClick={() => setSidebarOpen(false)}
           />
@@ -113,7 +113,7 @@ export default function MainLayout({ children }) {
 
           <SidebarItem
             icon={<Settings size={20} />}
-            label="Settings"
+            label="Configuración"
             active={location.pathname.startsWith("/settings")}
             onClick={() => setSidebarOpen(false)}
           />
