@@ -74,12 +74,8 @@ export default function MainLayout({ children }) {
           <SidebarItem
             icon={<BarChart3 size={20} />}
             label="Administración"
-<<<<<<< HEAD
             subtitle="CLIENTES"
-=======
-            subtitle="CLTES"
             active={location.pathname.startsWith("/admin")}
->>>>>>> 0c08c9898d71335585c73f712011f4fb8d6030fc
             onClick={() => setSidebarOpen(false)}
           />
 
@@ -148,7 +144,6 @@ export default function MainLayout({ children }) {
 
       {/* Contenido Principal */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-<<<<<<< HEAD
         {/* Header móvil */}
         <header className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
           <button
@@ -167,9 +162,6 @@ export default function MainLayout({ children }) {
 
         {/* Contenido */}
         <main className="flex-1 overflow-auto pt-2 pb-4 px-4 lg:pt-2 lg:pb-4 lg:px-4">
-=======
-        <main className="flex-1 overflow-auto pt-2 pb-4 px-4">
->>>>>>> 0c08c9898d71335585c73f712011f4fb8d6030fc
           {children}
         </main>
       </div>
