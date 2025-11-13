@@ -1,4 +1,4 @@
-import { findClientByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, updateTicketDB } from "./ticket.model.js";
+import { findcustomerByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, updateTicketDB } from "./ticket.model.js";
 import { logger } from "../../config/logger.js";
 
 
@@ -12,17 +12,17 @@ export const crearTicket = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const client = await findClientByEmail(email);
-    if (!client) {
-      return res.status(404).json({ error: "Client not found" });
+    const customer = await findcustomerByEmail(email);
+    if (!customer) {
+      return res.status(404).json({ error: "customer not found" });
     }
 
-    const ticketId = await createTicketDB(client.id, subject, problemDescription, client.zone);
+    const ticketId = await createTicketDB(customer.id, subject, problemDescription, customer.zone);
 
     res.status(201).json({
       message: "Ticket created successfully",
       ticketId,
-      zone: client.zone,
+      zone: customer.zone,
     });
   } catch (error) {
     logger.error(`Error creating ticket: ${error.message}`);

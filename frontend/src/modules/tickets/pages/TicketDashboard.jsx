@@ -16,7 +16,7 @@ export default function TicketDashboard() {
     const data = await getTickets({ sortField, sortOrder, page, perPage });
     const mappedTickets = data.tickets.map((t) => ({
       id: t.id,
-      client: t.client,
+      customer: t.customer,
       subject: t.subject || "Sin asunto",
       status: t.status || "Abierto",
       zone: t.zone || "N/A",
@@ -59,7 +59,7 @@ export default function TicketDashboard() {
         perPage={perPage}
         setPerPage={setPerPage}
         totalRecords={totalRecords}
-        onPerPageChange={fetchData} // ✅ ahora recarga automáticamente
+        onPerPageChange={fetchData} 
       />
     </MainLayout>
   );

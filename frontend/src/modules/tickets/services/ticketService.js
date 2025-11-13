@@ -60,9 +60,9 @@ export const getTickets = async ({
 /**
  * Obtener un ticket por ID
  */
-export const getTicketById = async (id) => {
+export const getTicketById = async (ticketId) => {
   try {
-    const response = await fetch(`${API_URL}/${id}`);
+    const response = await fetch(`${API_URL}/${ticketId}`); // ✅ Usa ticketId en lugar de id
     if (!response.ok) throw new Error("Ticket no encontrado");
     return await response.json();
   } catch (err) {

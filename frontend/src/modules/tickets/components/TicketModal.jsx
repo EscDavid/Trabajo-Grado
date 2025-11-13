@@ -1,25 +1,80 @@
 import React, { useEffect, useState } from "react";
-import { getTicketById } from "../services/ticketService";
+import { getTicketById, updateTicket } from "../services/ticketService";
 
 export default function TicketModal({ ticketId, onClose }) {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTicket = async () => {
-      const data = await getTicketById(ticketId);
-      if (data) setFormData(data);
-      setLoading(false);
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getTicketById(ticketId);
+        if (data) {
+          setFormData(data);
+        } else {
+          setError("No se pudo cargar el ticket");
+        }
+      } catch (err) {
+        setError("Error al cargar el ticket");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchTicket();
   }, [ticketId]);
 
-  if (loading || !formData) {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      await updateTicket(formData.id, {
+        status: formData.status,
+        solution_description: formData.solution_description,
+      });
+      onClose(); // cerrar cuando se guarde
+    } catch (err) {
+      console.error("Error guardando ticket:", err);
+      alert("Hubo un error al guardar los cambios");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-lg z-50">
         Cargando ticket...
       </div>
     );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 max-w-md text-center">
+          <div className="text-red-500 text-lg mb-4">Error</div>
+          <p className="text-gray-700 mb-4">{error}</p>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!formData) {
+    return null;
   }
 
   return (
@@ -41,7 +96,7 @@ export default function TicketModal({ ticketId, onClose }) {
           <div className="space-y-4">
             <input
               type="text"
-              value={formData.client_name || ""}
+              value={formData.customer || ""}
               readOnly
               className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
             />
@@ -74,21 +129,25 @@ export default function TicketModal({ ticketId, onClose }) {
               className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
             />
 
+            {/* EDITABLE STATUS */}
             <select
+              name="status"
               value={formData.status || "Abierto"}
-              disabled
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm"
             >
               <option>Abierto</option>
               <option>En Proceso</option>
               <option>Cerrado</option>
             </select>
 
+            {/* EDITABLE SOLUTION */}
             <textarea
+              name="solution_description"
               value={formData.solution_description || ""}
-              readOnly
+              onChange={handleChange}
               rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm resize-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm resize-none"
             />
 
             <div className="grid grid-cols-2 gap-4">
@@ -108,11 +167,13 @@ export default function TicketModal({ ticketId, onClose }) {
           </div>
 
           <div className="flex gap-3 mt-6">
+            
             <button
-              onClick={onClose}
-              className="flex-1 px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors font-medium text-sm"
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium text-sm"
             >
-              Cerrar
+              {saving ? "Guardando..." : "Guardar cambios"}
             </button>
           </div>
         </div>
@@ -120,4 +181,3 @@ export default function TicketModal({ ticketId, onClose }) {
     </div>
   );
 }
-

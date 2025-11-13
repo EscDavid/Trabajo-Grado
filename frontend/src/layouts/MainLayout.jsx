@@ -66,7 +66,7 @@ export default function MainLayout({ children }) {
           <SidebarItem
             icon={<BarChart3 size={20} />}
             label="Administración"
-            subtitle="CLTES"
+            subtitle="CLIENTES"
             onClick={() => setSidebarOpen(false)}
           />
           <SidebarItem
@@ -102,8 +102,8 @@ export default function MainLayout({ children }) {
         <div className="p-3 border-t border-gray-200">
           <div className="flex items-center gap-3">
             <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
-              alt="User"
+              src=""
+              alt="User P.Photo"
               className="w-9 h-9 rounded-full"
             />
             <div className="flex-1 leading-tight">
@@ -127,9 +127,9 @@ export default function MainLayout({ children }) {
           </button>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">D</span>
+              <span className="text-white font-bold text-xl">I</span>
             </div>
-            <span className="font-bold text-1xl">Dabang</span>
+            <span className="font-bold text-1xl">Isp Management</span>
           </div>
         </header>
 
