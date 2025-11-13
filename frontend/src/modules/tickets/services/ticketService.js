@@ -1,30 +1,31 @@
 // src/modules/tickets/services/ticketService.js
 
-const API_URL = "http://localhost:5000/tickets";
+
 
 /**
  * Crear un nuevo ticket
  * @param {Object} formData - Datos del formulario (correoCliente, asunto, descripcionProblema)
  */
-export const createTicket = async (ticketData) => {
-  try {
-    console.log("[TicketService] Enviando:", ticketData);
+// frontend/src/modules/tickets/services/ticketService.js
+const API_URL = `${import.meta.env.VITE_API_URL}/tickets`;
 
-    const res = await fetch("http://localhost:5000/tickets", {
+export const createTicket = async (formData) => {
+  try {
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(ticketData),
+      body: JSON.stringify(formData), // { email, subject, problemDescription }
     });
 
-    const responseText = await res.text();
     if (!res.ok) {
-      throw new Error(`(${res.status}) Error al crear ticket: ${responseText}`);
+      const errorText = await res.text();
+      throw new Error(`Error creating ticket: ${errorText}`);
     }
 
-    return JSON.parse(responseText);
-  } catch (err) {
-    console.error("[TicketService] Error creando ticket:", err);
-    throw err;
+    return await res.json();
+  } catch (error) {
+    console.error("[TicketService] Error:", error);
+    throw error;
   }
 };
 
@@ -37,16 +38,19 @@ export const getTickets = async ({
   sortField = "created_at",
   sortOrder = "asc",
   page = 1,
-  limit = 20,
+  perPage = 10, // ✅ usamos perPage para coincidir con el backend
 } = {}) => {
   try {
+    // ✅ Query params actualizados (perPage reemplaza limit)
     const response = await fetch(
-      `${API_URL}/dashboard?sortField=${sortField}&sortOrder=${sortOrder}&page=${page}&limit=${limit}`
+      `${API_URL}/dashboard?sortField=${sortField}&sortOrder=${sortOrder}&page=${page}&perPage=${perPage}`
     );
 
     if (!response.ok) throw new Error("Error al obtener los tickets");
 
-    return await response.json();
+    const data = await response.json();
+
+    return data;
   } catch (err) {
     console.error("[TicketService] Error obteniendo tickets:", err);
     return { tickets: [], totalPages: 1, totalRecords: 0 };
@@ -56,9 +60,9 @@ export const getTickets = async ({
 /**
  * Obtener un ticket por ID
  */
-export const getTicketById = async (id) => {
+export const getTicketById = async (ticketId) => {
   try {
-    const response = await fetch(`${API_URL}/${id}`);
+    const response = await fetch(`${API_URL}/${ticketId}`); // ✅ Usa ticketId en lugar de id
     if (!response.ok) throw new Error("Ticket no encontrado");
     return await response.json();
   } catch (err) {

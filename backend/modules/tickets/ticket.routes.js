@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { 
-  crearTicket, 
-  obtenerTicketsDashboard, 
+import {
+  crearTicket,
+  obtenerTicketsDashboard,
   obtenerTicketPorId,
   actualizarTicket
 } from "./ticket.controller.js";
@@ -16,9 +16,10 @@ router.get("/dashboard", obtenerTicketsDashboard);
 router.post(
   "/",
   [
-    body("correoCliente").isEmail(),
-    body("asunto").notEmpty(),
-    body("descripcionProblema").notEmpty()
+    body("email").isEmail(),
+    body("subject").notEmpty(),
+    body("problemDescription").notEmpty()
+
   ],
   crearTicket
 );

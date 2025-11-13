@@ -74,7 +74,7 @@ export default function MainLayout({ children }) {
           <SidebarItem
             icon={<BarChart3 size={20} />}
             label="Administración"
-            subtitle="CLTES"
+            subtitle="USUARIOS"
             active={location.pathname.startsWith("/admin")}
             onClick={() => setSidebarOpen(false)}
           />
@@ -113,7 +113,7 @@ export default function MainLayout({ children }) {
 
           <SidebarItem
             icon={<Settings size={20} />}
-            label="Settings"
+            label="Configuración"
             active={location.pathname.startsWith("/settings")}
             onClick={() => setSidebarOpen(false)}
           />
@@ -130,8 +130,8 @@ export default function MainLayout({ children }) {
         <div className="p-3 border-t border-gray-200">
           <div className="flex items-center gap-3">
             <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop"
-              alt="User"
+              src=""
+              alt="User P.Photo"
               className="w-9 h-9 rounded-full"
             />
             <div className="flex-1 leading-tight">
@@ -144,7 +144,24 @@ export default function MainLayout({ children }) {
 
       {/* Contenido Principal */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <main className="flex-1 overflow-auto pt-2 pb-4 px-4">
+        {/* Header móvil */}
+        <header className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <Menu size={29} />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-xl">I</span>
+            </div>
+            <span className="font-bold text-1xl">Isp Management</span>
+          </div>
+        </header>
+
+        {/* Contenido */}
+        <main className="flex-1 overflow-auto pt-2 pb-4 px-4 lg:pt-2 lg:pb-4 lg:px-4">
           {children}
         </main>
       </div>

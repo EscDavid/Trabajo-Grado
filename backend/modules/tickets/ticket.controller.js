@@ -1,51 +1,73 @@
-import { findClientByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, updateTicketDB } from "./ticket.model.js";
-
+import { findcustomerByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, updateTicketDB } from "./ticket.model.js";
+import { logger } from "../../config/logger.js";
 
 
 
 // Crear ticket
 export const crearTicket = async (req, res) => {
   try {
-    const { correoCliente, asunto, descripcionProblema } = req.body;
-    const client = await findClientByEmail(correoCliente);
-    if (!client) return res.status(404).json({ error: "El cliente no existe en la base de datos." });
+    const { email, subject, problemDescription } = req.body;
 
-    const ticketId = await createTicketDB(client.id, asunto, descripcionProblema, client.zone);
-    res.status(201).json({ message: "Ticket creado con éxito", ticketId });
-    
-  } catch (error) {
-    console.error("💥 Error al crear ticket:", error); // Log interno completo
-    res.status(500).json({
-      error: "Error interno del servidor. Intente más tarde."
+    if (!email || !subject || !problemDescription) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const customer = await findcustomerByEmail(email);
+    if (!customer) {
+      return res.status(404).json({ error: "customer not found" });
+    }
+
+    const ticketId = await createTicketDB(customer.id, subject, problemDescription, customer.zone);
+
+    res.status(201).json({
+      message: "Ticket created successfully",
+      ticketId,
+      zone: customer.zone,
     });
+  } catch (error) {
+    logger.error(`Error creating ticket: ${error.message}`);
+    res.status(500).json({ error: "Error creating ticket" });
   }
-  
 };
 
+
 // Obtener lista de tickets con filtro dinámico
+// ✅ controllers/ticket.controller.js
 export const obtenerTicketsDashboard = async (req, res) => {
   try {
-    const { page = 1, limit = 10, sortField = "created_at", sortOrder = "asc" } = req.query;
+    const {
+      page = 1,
+      perPage = 10, // ✅ usar perPage, no limit
+      sortField = "created_at",
+      sortOrder = "asc",
+    } = req.query;
 
     const pageNum = Number(page);
-    const limitNum = Number(limit);
-    const offset = (pageNum - 1) * limitNum;
+    const perPageNum = Number(perPage);
+    const offset = (pageNum - 1) * perPageNum;
 
-    // Llamada al model que hace el query
-    const tickets = await getTicketsFilteredDB({ sortField, sortOrder, limit: limitNum, offset });
+    // Obtener los tickets según la página y orden
+    const tickets = await getTicketsFilteredDB({
+      sortField,
+      sortOrder,
+      limit: perPageNum,
+      offset,
+    });
 
-    // Contar total de registros
-    const totalRecords = await getTicketsFilteredDB({ sortField: "id", sortOrder: "asc", limit: 1, offset: 0, countOnly: true });
+    // Contar total de registros (para la paginación)
+    const totalRecords = await getTicketsFilteredDB({
+      countOnly: true,
+    });
 
-    // Calcular total de páginas
-    const totalPages = Math.ceil(totalRecords / limitNum);
+    const totalPages = Math.ceil(totalRecords / perPageNum);
 
     res.json({ tickets, totalRecords, totalPages });
   } catch (err) {
-    console.error("Error en tickets/dashboard:", err);
+    logger.error(`Error en tickets/dashboard: ${err.message}`);
     res.status(500).json({ message: "Error al obtener tickets" });
   }
 };
+
 
 
 
@@ -60,7 +82,7 @@ export const obtenerTicketPorId = async (req, res) => {
 
     res.json(ticket);
   } catch (error) {
-    console.error("Error en obtenerTicketPorId:", error);
+    logger.error(`Error al obtener tickets por Id: ${error.message}`);
     res.status(500).json({ error: "Error al obtener el ticket" });
   }
 };
