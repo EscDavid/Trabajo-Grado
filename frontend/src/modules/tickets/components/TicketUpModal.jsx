@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { getTicketById, updateTicket } from "../services/ticketService";
+import { useNavigate } from "react-router-dom";
+
 
 export default function TicketModal({ ticketId, onClose }) {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
-
+const navigate = useNavigate();
   useEffect(() => {
     const fetchTicket = async () => {
       try {
@@ -30,22 +32,28 @@ export default function TicketModal({ ticketId, onClose }) {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    console.log("handleChange →", e.target.name, "=", e.target.value);
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const isClosed = formData?.status === "Cerrado";
   const handleSave = async () => {
     try {
       setSaving(true);
+      console.log(formData);
       await updateTicket(formData.id, {
         status: formData.status,
         solution_description: formData.solution_description,
+        technicianId: null,
       });
-      onClose(); // cerrar cuando se guarde
+      onClose();
     } catch (err) {
       console.error("Error guardando ticket:", err);
       alert("Hubo un error al guardar los cambios");
     } finally {
       setSaving(false);
     }
+    navigate("/tickets/dashboard", { replace: true });
+
   };
 
   if (loading) {
@@ -96,20 +104,20 @@ export default function TicketModal({ ticketId, onClose }) {
           <div className="space-y-4">
             <input
               type="text"
-              value={formData.customer || ""}
+              value={formData.customer}
               readOnly
               className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
             />
 
             <input
               type="text"
-              value={formData.subject || ""}
+              value={formData.subject}
               readOnly
               className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
             />
 
             <textarea
-              value={formData.problem_description || ""}
+              value={formData.problem_description}
               readOnly
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm resize-none"
@@ -117,35 +125,37 @@ export default function TicketModal({ ticketId, onClose }) {
 
             <input
               type="text"
-              value={formData.zone || ""}
+              value={formData.zone}
               readOnly
               className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
             />
 
             <input
               type="text"
-              value={formData.technician_name || ""}
+              value={formData.technician_name}
               readOnly
               className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
             />
 
-            {/* EDITABLE STATUS */}
+
             <select
               name="status"
-              value={formData.status || "Abierto"}
+              value={formData.status}
               onChange={handleChange}
+              disabled={isClosed}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm"
             >
-              <option>Abierto</option>
-              <option>En Proceso</option>
-              <option>Cerrado</option>
+              <option value="Abierto">Abierto</option>
+              <option value="En Progreso">En Progreso</option>
+              <option value="Cerrado">Cerrado</option>
             </select>
 
-            {/* EDITABLE SOLUTION */}
+
             <textarea
               name="solution_description"
-              value={formData.solution_description || ""}
+              value={formData.solution_description}
               onChange={handleChange}
+              disabled={isClosed}
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm resize-none"
             />
@@ -166,16 +176,17 @@ export default function TicketModal({ ticketId, onClose }) {
             </div>
           </div>
 
-          <div className="flex gap-3 mt-6">
-            
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium text-sm"
-            >
-              {saving ? "Guardando..." : "Guardar cambios"}
-            </button>
-          </div>
+          {!isClosed && (
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium text-sm"
+              >
+                {saving ? "Guardando..." : "Guardar cambios"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

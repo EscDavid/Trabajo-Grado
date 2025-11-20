@@ -38,10 +38,10 @@ export const getTickets = async ({
   sortField = "created_at",
   sortOrder = "asc",
   page = 1,
-  perPage = 10, // ✅ usamos perPage para coincidir con el backend
+  perPage = 10, 
 } = {}) => {
   try {
-    // ✅ Query params actualizados (perPage reemplaza limit)
+    
     const response = await fetch(
       `${API_URL}/dashboard?sortField=${sortField}&sortOrder=${sortOrder}&page=${page}&perPage=${perPage}`
     );

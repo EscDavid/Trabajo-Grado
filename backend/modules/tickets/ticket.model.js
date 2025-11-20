@@ -72,7 +72,7 @@ export const getTicketByIdDB = async (id) => {
         t.solution_description, 
         t.created_at, 
         t.closed_at, 
-        u.name AS technician_name
+        u.full_name AS technician_name
      FROM tickets t
      INNER JOIN customers c ON t.customer_id = c.id
      LEFT JOIN users u ON t.technician_id = u.id
@@ -89,15 +89,21 @@ export const getTicketByIdDB = async (id) => {
   return ticket;
 };
 
+export const getTicketsByDateDB = async (fechaInicio) => {
+  const [rows] = await db.query(
+    `SELECT status FROM tickets WHERE created_at >= ?`,
+    [fechaInicio]
+  );
+  return rows;
+};
 
-// Actualizar ticket
-export const updateTicketDB = async (id, solution, status, technicianId) => {
+export const updateTicketDB = async (id, status,solution_description, technicianId) => {
   const closedAt = status === "Cerrado" ? new Date() : null;
   const [result] = await db.query(
     `UPDATE tickets 
-     SET solution_description=?, status=?, technician_id=?, closed_at=? 
+     SET status=?,solution_description=? , technician_id=?, closed_at=? 
      WHERE id=?`,
-    [solution, status, technicianId, closedAt, id]
+    [status, solution_description, technicianId, closedAt, id]
   );
   return result.affectedRows;
 };

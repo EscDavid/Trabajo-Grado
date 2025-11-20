@@ -12,22 +12,30 @@ const router = Router();
 // Obtener lista de tickets (para dashboard)
 router.get("/dashboard", obtenerTicketsDashboard);
 
-// Crear un nuevo ticket (con validación)
+// Crear un nuevo ticket
 router.post(
   "/",
   [
     body("email").isEmail(),
     body("subject").notEmpty(),
     body("problemDescription").notEmpty()
-
   ],
   crearTicket
 );
 
 // Actualizar un ticket por ID
-router.put("/:id", actualizarTicket);
+router.put(
+  "/:id",
+  [
+    body("status").notEmpty(),
+    body("solution_description").notEmpty(),
+    body("technicianId")
+  ],
+  actualizarTicket
+);
 
 // Obtener un ticket por ID
 router.get("/:id", obtenerTicketPorId);
 
 export default router;
+
