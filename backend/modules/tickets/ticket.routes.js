@@ -3,8 +3,7 @@ import { body } from "express-validator";
 import {
   crearTicket,
   obtenerTicketsDashboard,
-  obtenerTicketPorId,
-  actualizarTicket
+  obtenerTicketPorId
 } from "./ticket.controller.js";
 
 const router = Router();
@@ -18,12 +17,13 @@ router.post(
   [
     body("email").isEmail(),
     body("subject").notEmpty(),
-    body("problemDescription").notEmpty()
+    body("description").notEmpty()
   ],
   crearTicket
 );
 
 // Actualizar un ticket por ID
+/*
 router.put(
   "/:id",
   [
@@ -33,7 +33,7 @@ router.put(
   ],
   actualizarTicket
 );
-
+*/
 // Obtener un ticket por ID
 router.get("/:id", obtenerTicketPorId);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getTicketById, updateTicket } from "../services/ticketService";
+import { getTicketById } from "../services/ticketService";
 import { useNavigate } from "react-router-dom";
 
 
@@ -36,6 +36,7 @@ const navigate = useNavigate();
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const isClosed = formData?.status === "Cerrado";
+  /*
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -55,7 +56,7 @@ const navigate = useNavigate();
     navigate("/tickets/dashboard", { replace: true });
 
   };
-
+*/
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-lg z-50">
@@ -101,7 +102,14 @@ const navigate = useNavigate();
         </div>
 
         <div className="p-6 max-h-[75vh] overflow-y-auto">
-          <div className="space-y-4">
+        <div className="space-y-4">
+            <input
+              type="text"
+              value={formData.ticket_type}
+              readOnly
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-sm"
+            />
+          
             <input
               type="text"
               value={formData.customer}
@@ -179,7 +187,7 @@ const navigate = useNavigate();
           {!isClosed && (
             <div className="flex gap-3 mt-6">
               <button
-                onClick={handleSave}
+                //onClick={handleSave}
                 disabled={saving}
                 className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium text-sm"
               >

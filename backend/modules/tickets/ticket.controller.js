@@ -1,14 +1,14 @@
-import { findcustomerByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, updateTicketDB, getTicketsByDateDB } from "./ticket.model.js";
+import { findcustomerByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, getTicketsByDateDB } from "./ticket.model.js";
 import { logger } from "../../config/logger.js";
 
-
+//elimine del import updateticketbyID
 
 
 export const crearTicket = async (req, res) => {
   try {
-    const { email, subject, problemDescription } = req.body;
+    const { email, subject, description } = req.body;
 
-    if (!email || !subject || !problemDescription) {
+    if (!email || !subject || !description) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -17,7 +17,7 @@ export const crearTicket = async (req, res) => {
       return res.status(404).json({ error: "customer not found" });
     }
 
-    const ticketId = await createTicketDB(customer.id, subject, problemDescription, customer.zone);
+    const ticketId = await createTicketDB(customer.id, subject, description, customer.zone);
 
     res.status(201).json({
       message: "Ticket created successfully",
@@ -33,6 +33,7 @@ export const crearTicket = async (req, res) => {
 
 export const obtenerTicketsDashboard = async (req, res) => {
   try {
+    const statsArray =[];
     const {
       page = 1,
       perPage = 10,
@@ -60,8 +61,8 @@ export const obtenerTicketsDashboard = async (req, res) => {
     if (!page && !perPage && !sortField && !sortOrder) {
       const statsObj = await getDashboardStats();
 
-      const statsArray = Object.values(statsObj); // [Abierto, EnProgreso, Cerrado]
-    }
+       statsArray = Object.values(statsObj); 
+   }
     res.json({ tickets, totalRecords, totalPages, stats: statsArray });
 
   } catch (err) {
@@ -124,6 +125,7 @@ export const obtenerTicketPorId = async (req, res) => {
 };
 
 // Actualizar ticket
+/*
 export const actualizarTicket = async (req, res) => {
   try {
     const { id } = req.params;
@@ -147,3 +149,4 @@ export const actualizarTicket = async (req, res) => {
     res.status(500).json({ error: "No se pudo actualizar el ticket" });
   }
 };
+*/

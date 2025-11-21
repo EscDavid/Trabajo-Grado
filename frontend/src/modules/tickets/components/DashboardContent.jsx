@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ChevronUp, ChevronDown, Columns } from "lucide-react";
-import TicketModal from "./TicketUpModal";
+import TicketModal from "./TicketModal";
 import TicketStats from "./TicketStats";
 
 export default function DashboardContent({
