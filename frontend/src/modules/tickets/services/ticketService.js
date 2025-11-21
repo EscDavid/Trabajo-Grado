@@ -38,10 +38,10 @@ export const getTickets = async ({
   sortField = "created_at",
   sortOrder = "asc",
   page = 1,
-  perPage = 10, // ✅ usamos perPage para coincidir con el backend
+  perPage = 10, 
 } = {}) => {
   try {
-    // ✅ Query params actualizados (perPage reemplaza limit)
+    
     const response = await fetch(
       `${API_URL}/dashboard?sortField=${sortField}&sortOrder=${sortOrder}&page=${page}&perPage=${perPage}`
     );
@@ -62,7 +62,7 @@ export const getTickets = async ({
  */
 export const getTicketById = async (ticketId) => {
   try {
-    const response = await fetch(`${API_URL}/${ticketId}`); // ✅ Usa ticketId en lugar de id
+    const response = await fetch(`${API_URL}/${ticketId}`); 
     if (!response.ok) throw new Error("Ticket no encontrado");
     return await response.json();
   } catch (err) {
@@ -74,6 +74,7 @@ export const getTicketById = async (ticketId) => {
 /**
  * Actualizar un ticket por ID
  */
+/*
 export const updateTicket = async (id, updatedData) => {
   try {
     const response = await fetch(`${API_URL}/${id}`, {
@@ -89,3 +90,4 @@ export const updateTicket = async (id, updatedData) => {
     throw err;
   }
 };
+*/

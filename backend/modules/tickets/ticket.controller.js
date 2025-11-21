@@ -1,14 +1,14 @@
-import { findcustomerByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, updateTicketDB } from "./ticket.model.js";
+import { findcustomerByEmail, createTicketDB, getTicketsFilteredDB, getTicketByIdDB, getTicketsByDateDB } from "./ticket.model.js";
 import { logger } from "../../config/logger.js";
 
+//elimine del import updateticketbyID
 
 
-// Crear ticket
 export const crearTicket = async (req, res) => {
   try {
-    const { email, subject, problemDescription } = req.body;
+    const { email, subject, description } = req.body;
 
-    if (!email || !subject || !problemDescription) {
+    if (!email || !subject || !description) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -17,7 +17,7 @@ export const crearTicket = async (req, res) => {
       return res.status(404).json({ error: "customer not found" });
     }
 
-    const ticketId = await createTicketDB(customer.id, subject, problemDescription, customer.zone);
+    const ticketId = await createTicketDB(customer.id, subject, description, customer.zone);
 
     res.status(201).json({
       message: "Ticket created successfully",
@@ -31,13 +31,12 @@ export const crearTicket = async (req, res) => {
 };
 
 
-// Obtener lista de tickets con filtro dinámico
-// ✅ controllers/ticket.controller.js
 export const obtenerTicketsDashboard = async (req, res) => {
   try {
+    const statsArray =[];
     const {
       page = 1,
-      perPage = 10, // ✅ usar perPage, no limit
+      perPage = 10,
       sortField = "created_at",
       sortOrder = "asc",
     } = req.query;
@@ -46,7 +45,6 @@ export const obtenerTicketsDashboard = async (req, res) => {
     const perPageNum = Number(perPage);
     const offset = (pageNum - 1) * perPageNum;
 
-    // Obtener los tickets según la página y orden
     const tickets = await getTicketsFilteredDB({
       sortField,
       sortOrder,
@@ -54,14 +52,19 @@ export const obtenerTicketsDashboard = async (req, res) => {
       offset,
     });
 
-    // Contar total de registros (para la paginación)
     const totalRecords = await getTicketsFilteredDB({
       countOnly: true,
     });
 
     const totalPages = Math.ceil(totalRecords / perPageNum);
 
-    res.json({ tickets, totalRecords, totalPages });
+    if (!page && !perPage && !sortField && !sortOrder) {
+      const statsObj = await getDashboardStats();
+
+       statsArray = Object.values(statsObj); 
+   }
+    res.json({ tickets, totalRecords, totalPages, stats: statsArray });
+
   } catch (err) {
     logger.error(`Error en tickets/dashboard: ${err.message}`);
     res.status(500).json({ message: "Error al obtener tickets" });
@@ -69,6 +72,40 @@ export const obtenerTicketsDashboard = async (req, res) => {
 };
 
 
+export const getDashboardStats = async (req, res) => {
+  try {
+
+    const fechaInicio = new Date();
+    fechaInicio.setMonth(fechaInicio.getMonth() - 1);
+
+
+    const tickets = await getTicketsByDateDB(fechaInicio);
+
+
+    const stats = tickets.reduce(
+      (acc, ticket) => {
+        switch (ticket.status) {
+          case "Abierto":
+            acc.Abierto++;
+            break;
+          case "En Progreso":
+            acc.EnProgreso++;
+            break;
+          case "Cerrado":
+            acc.Cerrado++;
+            break;
+        }
+        return acc;
+      },
+      { Abierto: 0, EnProgreso: 0, Cerrado: 0 }
+    );
+
+    return stats;
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error obteniendo estadísticas del dashboard" });
+  }
+};
 
 
 export const obtenerTicketPorId = async (req, res) => {
@@ -88,17 +125,28 @@ export const obtenerTicketPorId = async (req, res) => {
 };
 
 // Actualizar ticket
+/*
 export const actualizarTicket = async (req, res) => {
   try {
     const { id } = req.params;
-    const { descripcionSolucion, estado, tecnicoId } = req.body;
+    const ticket = await getTicketByIdDB(id);
+    if (!ticket) {
+      return res.status(404).json({ error: "Ticket no encontrado" });
+    }
+    if (ticket.status === 3) {
+      return res
+        .status(403)
+        .json({ error: "No se puede actualizar un ticket Cerrado" });
+    }
+    const { status, solution_description, technicianId } = req.body;
 
-    const affected = await updateTicketDB(id, descripcionSolucion, estado, tecnicoId);
+    const affected = await updateTicketDB(id, status, solution_description, technicianId);
     if (affected === 0) return res.status(404).json({ error: "Ticket no encontrado o sin cambios" });
 
-    res.json({ message: "Ticket actualizado correctamente" });
+    return res.json({ message: "Ticket actualizado correctamente" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "No se pudo actualizar el ticket" });
   }
 };
+*/

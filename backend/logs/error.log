@@ -10,3 +10,23 @@
 [2025-11-13T04:33:57.646Z] ERROR: Error en tickets/dashboard: Unknown column 'c.name' in 'field list'
 [2025-11-13T04:33:59.075Z] ERROR: Error en tickets/dashboard: Unknown column 'c.name' in 'field list'
 [2025-11-13T04:33:59.079Z] ERROR: Error en tickets/dashboard: Unknown column 'c.name' in 'field list'
+[2025-11-14T23:46:18.088Z] ERROR: Error en tickets/dashboard: read ECONNRESET
+[2025-11-14T23:46:19.471Z] ERROR: Error en tickets/dashboard: Connection lost: The server closed the connection.
+[2025-11-18T03:47:29.973Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T03:47:30.059Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T03:47:32.397Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T03:47:32.482Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T03:47:35.265Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T03:47:35.352Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T03:47:48.688Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T03:47:48.772Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T04:00:28.314Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-18T04:00:28.399Z] ERROR: Error al obtener tickets por Id: Unknown column 'u.name' in 'field list'
+[2025-11-20T01:37:12.401Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T01:37:12.678Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T01:37:18.854Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T01:37:19.024Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T01:38:19.158Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T01:38:19.334Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T01:38:41.115Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T01:38:41.294Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')

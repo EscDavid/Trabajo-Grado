@@ -4,7 +4,7 @@ export default function TicketForm({ onSubmit }) {
   const [formData, setFormData] = useState({
     email: "",
     subject: "",
-    problemDescription: "",
+    description: "",
   });
 
   const handleSubmit = (e) => {
@@ -48,9 +48,9 @@ export default function TicketForm({ onSubmit }) {
           />
 
           <textarea
-            name="problemDescription"
-            value={formData.problemDescription}
-            onChange={(e) => setFormData({ ...formData, problemDescription: e.target.value })}
+            name="description"
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             placeholder="Problem description..."
             rows={6}
             className="w-full max-w-[645px] h-full max-h-[200px] px-5 py-3 border border-gray-400 rounded-xl outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-300 text-sm resize-none bg-white"
