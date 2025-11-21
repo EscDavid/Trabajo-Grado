@@ -3,23 +3,30 @@ import { logger } from "../../config/logger.js";
 
 // Buscar customere por correo
 export const findcustomerByEmail = async (email) => {
-  const [rows] = await db.query("SELECT id, zone FROM customers WHERE email = ?", [email]);
-  return rows[0] || null;
+  const [rows] = await db.query("SELECT C.id AS id, Z.name AS zone FROM customers C INNER JOIN zones Z ON C.zone_id = Z.id WHERE C.email = ?", [email]);
+  return rows[0];
 };
 
 // Crear ticket
-export const createTicketDB = async (customerId, subject, problemDescription,zone) => {
+export const createTicketDB = async (customerId, subject, description) => {
   const [result] = await db.query(
-    `INSERT INTO tickets (customer_id, subject, problem_description,zone)
-     VALUES (?, ?, ?, ?)`,
-    [customerId, subject, problemDescription,zone]
+    `INSERT INTO tickets (customer_id, subject, description)
+     VALUES (?, ?, ?)`,
+    [customerId, subject, description]
   );
   return result.insertId;
 };
 
-// Obtener lista de tickets con orden dinámico
-// Obtener lista de tickets con orden dinámico
-export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 10, offset = 0, countOnly = false } = {}) => {
+
+
+export const getTicketsFilteredDB = async ({
+  sortField,
+  sortOrder,
+  limit = 10,
+  offset = 0,
+  countOnly = false
+} = {}) => {
+
   if (countOnly) {
     const [rows] = await db.query("SELECT COUNT(*) AS count FROM tickets");
     return rows[0].count;
@@ -32,23 +39,44 @@ export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 10, o
       c.last_name AS customer_last_name, 
       t.subject, 
       t.status,
-      t.zone, 
+      z.name AS zone, 
       t.created_at
     FROM tickets t
     INNER JOIN customers c ON t.customer_id = c.id
+    INNER JOIN zones z ON c.zone_id = z.id
   `;
 
   const allowedFields = ["created_at", "subject", "status", "customer", "zone"];
   const allowedOrders = ["asc", "desc"];
-  const safeSortField = allowedFields.includes(sortField) ? sortField : "created_at";
-  const safeSortOrder = allowedOrders.includes(sortOrder?.toLowerCase()) ? sortOrder.toUpperCase() : "ASC";
-  const orderField = safeSortField === "customer" ? "c.last_name" : `t.${safeSortField}`;
+
+  const safeSortField = allowedFields.includes(sortField)
+    ? sortField
+    : "created_at";
+
+  const safeSortOrder = allowedOrders.includes(sortOrder?.toLowerCase())
+    ? sortOrder.toUpperCase()
+    : "ASC";
+
+  let orderField;
+
+  switch (safeSortField) {
+    case "customer":
+      orderField = "c.last_name";
+      break;
+    case "zone":
+      orderField = "z.name";
+      break;
+    default:
+      orderField = `t.${safeSortField}`;
+  }
 
   query += ` ORDER BY ${orderField} ${safeSortOrder} LIMIT ? OFFSET ?`;
 
-  const [rows] = await db.query(query, [parseInt(limit, 10), parseInt(offset, 10)]);
+  const [rows] = await db.query(query, [
+    parseInt(limit, 10),
+    parseInt(offset, 10)
+  ]);
 
-  // ✅ Combinar nombres sin alterar estructura original
   const formattedRows = rows.map(r => ({
     ...r,
     customer: `${r.customer_first_name || ""} ${r.customer_last_name || ""}`.trim()
@@ -58,6 +86,7 @@ export const getTicketsFilteredDB = async ({ sortField, sortOrder, limit = 10, o
 };
 
 
+
 // Obtener ticket por ID
 export const getTicketByIdDB = async (id) => {
   const [rows] = await db.query(
@@ -65,39 +94,52 @@ export const getTicketByIdDB = async (id) => {
         t.id, 
         c.first_name AS customer_first_name,
         c.last_name AS customer_last_name, 
+        ty.name AS ticket_type,
         t.subject, 
-        t.problem_description, 
+        t.description, 
         t.status, 
-        t.zone, 
+        z.name AS zone, 
         t.solution_description, 
         t.created_at, 
-        t.closed_at, 
-        u.name AS technician_name
+        t.closed_at
      FROM tickets t
      INNER JOIN customers c ON t.customer_id = c.id
-     LEFT JOIN users u ON t.technician_id = u.id
+     INNER JOIN zones z ON c.zone_id = z.id
+     INNER JOIN ticket_types ty ON t.ticket_type_id = ty.id
+     LEFT JOIN ticket_assignments a ON a.ticket_id = t.id
      WHERE t.id = ?`,
     [id]
   );
 
   if (!rows.length) return null;
 
-  // ✅ Combinar nombres del cliente
   const ticket = rows[0];
-  ticket.customer = `${ticket.customer_first_name || ""} ${ticket.customer_last_name || ""}`.trim();
+  ticket.customer = `${ticket.customer_first_name} ${ticket.customer_last_name}`.trim();
 
   return ticket;
 };
 
 
-// Actualizar ticket
-export const updateTicketDB = async (id, solution, status, technicianId) => {
+export const getTicketsByDateDB = async (fechaInicio) => {
+  const [rows] = await db.query(
+    `SELECT status FROM tickets WHERE created_at >= ?`,
+    [fechaInicio]
+  );
+  return rows;
+};
+
+
+
+
+/*
+export const updateTicketDB = async (id, status, solution_description, technicianId) => {
   const closedAt = status === "Cerrado" ? new Date() : null;
   const [result] = await db.query(
     `UPDATE tickets 
-     SET solution_description=?, status=?, technician_id=?, closed_at=? 
+     SET status=?,solution_description=? , technician_id=?, closed_at=? 
      WHERE id=?`,
-    [solution, status, technicianId, closedAt, id]
+    [status, solution_description, technicianId, closedAt, id]
   );
   return result.affectedRows;
 };
+*/

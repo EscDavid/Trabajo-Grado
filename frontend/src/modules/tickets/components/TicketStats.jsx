@@ -16,14 +16,42 @@ import {
 } from "recharts";
 import { Clock, TrendingUp } from "lucide-react";
 
-// 🎯 Datos simulados temporalmente (puedes conectar luego al backend)
-const mockData = {
-  ticketsByStatus: [
-    { name: "Abierto", value: 12, color: "#ef4444" },
-    { name: "En Progreso", value: 8, color: "#f59e0b" },
-    { name: "Cerrado", value: 45, color: "#10b981" },
-  ],
-  resolutionTime: {
+// Skeleton de carga
+function StatsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="bg-white rounded-lg shadow-sm p-4 animate-pulse"
+        >
+          <div className="h-5 bg-gray-200 rounded w-32 mb-4"></div>
+          <div className="h-[250px] sm:h-[280px] lg:h-[320px] bg-gray-100 rounded"></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function TicketStats({ ticketsByStatus, isLoading }) {
+  // Mostrar skeleton si está cargando o no hay datos
+  if (isLoading || !ticketsByStatus || ticketsByStatus.length === 0) {
+    return <StatsSkeleton />;
+  }
+
+  // Nombres y colores definidos en el front
+  const labels = ["Abierto", "En Progreso", "Cerrado"];
+  const colors = ["#ef4444", "#f59e0b", "#10b981"];
+
+  // Convertir array a formato PieChart
+  const chartData = ticketsByStatus.map((value, index) => ({
+    name: labels[index],
+    value,
+    color: colors[index],
+  }));
+
+  // Datos de ejemplo para los otros gráficos
+  const resolutionTime = {
     actual: 4.5,
     target: 6.0,
     history: [
@@ -32,8 +60,9 @@ const mockData = {
       { week: "Sem 3", time: 5.1 },
       { week: "Sem 4", time: 4.5 },
     ],
-  },
-  productivity: {
+  };
+
+  const productivity = {
     assigned: 65,
     resolved: 53,
     rate: 81.5,
@@ -42,28 +71,23 @@ const mockData = {
       { month: "Feb", assigned: 62, resolved: 55 },
       { month: "Mar", assigned: 65, resolved: 53 },
     ],
-  },
-};
+  };
 
-export default function TicketStats() {
-  const { ticketsByStatus, resolutionTime, productivity } = mockData;
   const improvement =
-    ((resolutionTime.target - resolutionTime.actual) /
-      resolutionTime.target) *
-    100;
+    ((resolutionTime.target - resolutionTime.actual) / resolutionTime.target) * 100;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-      {/* 🟢 1. Tickets por Estado */}
+      {/* 1. Tickets por Estado */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <h3 className="text-base font-semibold text-gray-800 mb-3">
           Tickets por Estado
         </h3>
-        <div className="h-48">
+        <div className="w-full h-[250px] sm:h-[280px] lg:h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={ticketsByStatus}
+                data={chartData}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -71,7 +95,7 @@ export default function TicketStats() {
                 outerRadius={60}
                 label={({ name, value }) => `${name} (${value})`}
               >
-                {ticketsByStatus.map((entry, index) => (
+                {chartData.map((entry, index) => (
                   <Cell key={index} fill={entry.color} />
                 ))}
               </Pie>
@@ -81,27 +105,23 @@ export default function TicketStats() {
         </div>
       </div>
 
-      {/* 🕒 2. Tiempo Promedio de Resolución */}
+      {/* 2. Tiempo Promedio de Resolución */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-base font-semibold text-gray-800">
-            Tiempo Promedio
-          </h3>
+          <h3 className="text-base font-semibold text-gray-800">Tiempo Promedio</h3>
           <Clock className="w-5 h-5 text-blue-600" />
         </div>
         <div className="grid grid-cols-3 gap-2 mb-2 text-center">
           <div>
             <p className="text-xs text-blue-600 font-medium">Actual</p>
             <p className="text-xl font-bold text-blue-700">
-              {resolutionTime.actual}
-              <span className="text-xs">h</span>
+              {resolutionTime.actual}<span className="text-xs">h</span>
             </p>
           </div>
           <div>
             <p className="text-xs text-green-600 font-medium">Meta</p>
             <p className="text-xl font-bold text-green-700">
-              {resolutionTime.target}
-              <span className="text-xs">h</span>
+              {resolutionTime.target}<span className="text-xs">h</span>
             </p>
           </div>
           <div>
@@ -136,32 +156,24 @@ export default function TicketStats() {
         </div>
       </div>
 
-      {/* 📊 3. Productividad */}
+      {/* 3. Productividad */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-base font-semibold text-gray-800">
-            Productividad
-          </h3>
+          <h3 className="text-base font-semibold text-gray-800">Productividad</h3>
           <TrendingUp className="w-5 h-5 text-green-600" />
         </div>
         <div className="grid grid-cols-3 gap-2 mb-2 text-center">
           <div>
             <p className="text-xs text-blue-600 font-medium">Asignados</p>
-            <p className="text-xl font-bold text-blue-700">
-              {productivity.assigned}
-            </p>
+            <p className="text-xl font-bold text-blue-700">{productivity.assigned}</p>
           </div>
           <div>
             <p className="text-xs text-green-600 font-medium">Resueltos</p>
-            <p className="text-xl font-bold text-green-700">
-              {productivity.resolved}
-            </p>
+            <p className="text-xl font-bold text-green-700">{productivity.resolved}</p>
           </div>
           <div>
             <p className="text-xs text-purple-600 font-medium">Tasa</p>
-            <p className="text-xl font-bold text-purple-700">
-              {productivity.rate}%
-            </p>
+            <p className="text-xl font-bold text-purple-700">{productivity.rate}%</p>
           </div>
         </div>
         <div className="h-40">
@@ -172,18 +184,8 @@ export default function TicketStats() {
               <YAxis stroke="#6b7280" tick={{ fontSize: 11 }} />
               <Tooltip />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar
-                dataKey="assigned"
-                fill="#3b82f6"
-                name="Asignados"
-                radius={[4, 4, 0, 0]}
-              />
-              <Bar
-                dataKey="resolved"
-                fill="#10b981"
-                name="Resueltos"
-                radius={[4, 4, 0, 0]}
-              />
+              <Bar dataKey="assigned" fill="#3b82f6" name="Asignados" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="resolved" fill="#10b981" name="Resueltos" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
