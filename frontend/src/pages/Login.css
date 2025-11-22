@@ -1,0 +1,149 @@
+/* Fondo suave */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef1f7;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Tarjeta del login */
+.login-box {
+  background: #ffffff;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+/* Título */
+.login-box h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* Error */
+.error-box {
+  background: #ffe6e6;
+  color: #c0392b;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* Input con icono */
+.input-group {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 48px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #fafafa;
+  transition: 0.2s ease-in-out;
+}
+
+.input-group input:focus {
+  border-color: #6366f1;
+  background: #fff;
+  outline: none;
+}
+
+/* Icono dentro del input */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #888;
+}
+
+/* Botón ver contraseña */
+.toggle-password {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #777;
+  font-size: 17px;
+}
+
+/* Recordarme */
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 5px 0 18px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Botón */
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: #6366f1;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.btn:disabled {
+  background: #9aa3ff;
+}
+
+/* Links */
+.links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.links a {
+  color: #6366f1;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+.links .alt {
+  color: #555;
+}
+
+
+
+
