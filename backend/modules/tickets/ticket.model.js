@@ -2,22 +2,20 @@ import { db } from "../../config/db.js";
 import { logger } from "../../config/logger.js";
 
 // Buscar customere por correo
-export const findcustomerByEmail = async (email) => {
-  const [rows] = await db.query("SELECT C.id AS id, Z.name AS zone FROM customers C INNER JOIN zones Z ON C.zone_id = Z.id WHERE C.email = ?", [email]);
+export const findCustomerByEmail = async (email) => {
+  const [rows] = await db.query("SELECT C.id AS id, Z.name AS zone, C.billing_address FROM customers C INNER JOIN zones Z ON C.zone_id = Z.id WHERE C.email = ?", [email]);
   return rows[0];
 };
 
 // Crear ticket
-export const createTicketDB = async (customerId, subject, description) => {
+export const createTicketDB = async (ticket_type_id, customerId, subject, ticket_address, zone, description) => {
   const [result] = await db.query(
-    `INSERT INTO tickets (customer_id, subject, description)
-     VALUES (?, ?, ?)`,
-    [customerId, subject, description]
+    `INSERT INTO tickets (ticket_type_id, customer_id, subject,ticket_address, zone, description)
+     VALUES (?,?,?,?,?,?)`,
+    [ticket_type_id, customerId, subject, ticket_address, zone, description]
   );
   return result.insertId;
 };
-
-
 
 export const getTicketsFilteredDB = async ({
   sortField,
@@ -36,17 +34,28 @@ export const getTicketsFilteredDB = async ({
     SELECT 
       t.id, 
       c.first_name AS customer_first_name,
-      c.last_name AS customer_last_name, 
+      c.last_name AS customer_last_name,
+      ty.name AS ticket_type,
       t.subject, 
       t.status,
       z.name AS zone, 
       t.created_at
     FROM tickets t
     INNER JOIN customers c ON t.customer_id = c.id
+    INNER JOIN ticket_types ty ON t.ticket_type_id = ty.id
     INNER JOIN zones z ON c.zone_id = z.id
   `;
 
-  const allowedFields = ["created_at", "subject", "status", "customer", "zone"];
+  const allowedFields = [
+    "created_at",
+    "subject",
+    "status",
+    "customer",
+    "zone",
+    "id",
+    "ticket_type_id"
+  ];
+
   const allowedOrders = ["asc", "desc"];
 
   const safeSortField = allowedFields.includes(sortField)
@@ -63,8 +72,8 @@ export const getTicketsFilteredDB = async ({
     case "customer":
       orderField = "c.last_name";
       break;
-    case "zone":
-      orderField = "z.name";
+    case "ticket_type":
+      orderField = "ty.name";
       break;
     default:
       orderField = `t.${safeSortField}`;
@@ -85,15 +94,52 @@ export const getTicketsFilteredDB = async ({
   return formattedRows;
 };
 
+export const assignTicketsDB = async (ticketIds, technicianIds) => {
+  const now = new Date();
 
+  const values = [];
 
-// Obtener ticket por ID
+  ticketIds.forEach(ticketId => {
+    technicianIds.forEach(techId => {
+      values.push([ticketId, techId, now, now]);
+    });
+  });
+
+  const sql = `
+    INSERT INTO ticket_assignments (
+      ticket_id, 
+      technician_id,
+      assigned_at,
+      updated_at
+    ) VALUES ?
+  `;
+
+  await db.query(sql, [values]);
+};
+
+export const getTechniciansDB = async () => {
+  const [rows] = await db.query(
+    `
+      SELECT 
+        u.id,
+        u.full_name,
+        u.email,
+        r.name AS role
+      FROM users u
+      INNER JOIN roles r ON u.role_id = r.id
+      WHERE r.name = 'TECHNICAL' AND u.is_active = 1
+      ORDER BY u.full_name ASC
+    `
+  );
+  return rows;
+};
 export const getTicketByIdDB = async (id) => {
   const [rows] = await db.query(
     `SELECT 
         t.id, 
         c.first_name AS customer_first_name,
         c.last_name AS customer_last_name, 
+        c.service_address,
         ty.name AS ticket_type,
         t.subject, 
         t.description, 
@@ -120,15 +166,21 @@ export const getTicketByIdDB = async (id) => {
 };
 
 
-export const getTicketsByDateDB = async (fechaInicio) => {
+export const getTicketsByDateDB = async () => {
   const [rows] = await db.query(
-    `SELECT status FROM tickets WHERE created_at >= ?`,
-    [fechaInicio]
+    `SELECT status FROM tickets `, //poner limitaciones a futuro
+    
   );
   return rows;
 };
 
 
+export const getTicketsTypes = async () => {
+  const [rows] = await db.query(
+    `SELECT id, name FROM ticket_types WHERE is_active = '1'`,
+  );
+  return rows;
+};
 
 
 /*

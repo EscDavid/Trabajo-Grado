@@ -81,8 +81,7 @@ const findOne = async (req, res) => {
   }
 };
 
-// Actualizar un cliente
-// Actualizar un cliente
+
 const update = async (req, res) => {
   try {
     // ⛔ Bloquear que entren estas fechas desde el frontend
@@ -149,5 +148,39 @@ const remove = async (req, res) => {
   }
 };
 
+
+const findForSearch = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT 
+        id, 
+        CONCAT(first_name, ' ', last_name) as name
+      FROM customers 
+      WHERE status != 'cancelled'
+      ORDER BY first_name ASC`
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error("❌ Error al obtener clientes para búsqueda:", error);
+    res.status(500).json({ message: "Error al obtener los clientes." });
+  }
+};
+
+const findZones = async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT 
+        name
+      FROM zones
+      WHERE is_active = '1'
+      ORDER BY name ASC`
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error("❌ Error al obtener clientes para búsqueda:", error);
+    res.status(500).json({ message: "Error al obtener los clientes." });
+  }
+};
+
 // Exportación para CommonJS
-export { create, findAll, findOne, update, changeStatus, remove as delete };
+export { create, findAll, findOne, update, changeStatus, remove as delete, findForSearch, findZones  };

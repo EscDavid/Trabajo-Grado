@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import MainLayout from "../../../layouts/MainLayout";
 import DashboardContent from "../components/DashboardContent";
-import { getTickets } from "../services/ticketService";
+import { getTickets, getTicketStats } from "../services/ticketService";
 
 export default function TicketDashboard() {
   const [tickets, setTickets] = useState([]);
@@ -13,7 +13,7 @@ export default function TicketDashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
   const fetchData = useCallback(async () => {
     setIsLoading(true);
 
@@ -23,9 +23,10 @@ export default function TicketDashboard() {
     const mappedTickets = data.tickets.map((t) => ({
       id: t.id,
       customer: t.customer,
-      subject: t.subject ,
-      status: t.status ,
-      zone: t.zone ,
+      subject: t.subject,
+      ticket_type: t.ticket_type,
+      status: t.status,
+      zone: t.zone,
       creation: new Date(t.created_at).toLocaleDateString("es-ES", {
         day: "2-digit",
         month: "2-digit",
@@ -37,9 +38,6 @@ export default function TicketDashboard() {
     setTotalPages(data.totalPages || 1);
     setTotalRecords(data.totalRecords || data.tickets.length || 0);
 
-  
- 
-    setStats(data.stats );
 
     setIsLoading(false);
   }, [sortField, sortOrder, page, perPage]);
@@ -48,6 +46,15 @@ export default function TicketDashboard() {
     fetchData();
   }, [fetchData]);
 
+
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
   const handleSort = (field) => {
     if (field === sortField) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -56,15 +63,24 @@ export default function TicketDashboard() {
       setSortOrder("asc");
     }
     setPage(1);
-  };
+  }; 
+  const fetchStats = useCallback(async () => {
+    setIsLoadingStats(true);
+  
+    const data = await getTicketStats();
+  
+
+    setStats(data.stats);
+  
+    setIsLoadingStats(false);
+  }, []);
+  
 
   return (
     <MainLayout>
       <DashboardContent
         tickets={tickets}
-        ticketsByStatus={stats} 
-       // resolutionTime={dashboardStats?.resolutionTime}
-        //productivity={dashboardStats?.productivity}
+        ticketsByStatus={stats}
         sortField={sortField}
         sortOrder={sortOrder}
         handleSort={handleSort}

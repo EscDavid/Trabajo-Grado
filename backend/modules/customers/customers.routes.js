@@ -2,6 +2,12 @@ import { Router } from "express";
 const router = Router();
 import * as customerController from "./customers.controller.js";
 
+//Busca cliente por el nombre
+
+router.get("/zones",customerController.findZones);
+
+router.get("/search", customerController.findForSearch);
+
 // Crear un nuevo cliente
 router.post("/", customerController.create);
 

@@ -16,7 +16,7 @@ import {
 
 export default function MainLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation(); // ✅ Para detectar ruta actual
+  const location = useLocation(); 
 
   return (
     <div className="flex h-screen bg-gray-50 text-gray-800">

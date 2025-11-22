@@ -30,3 +30,28 @@
 [2025-11-20T01:38:19.334Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
 [2025-11-20T01:38:41.115Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
 [2025-11-20T01:38:41.294Z] ERROR: Error en tickets/dashboard: Cannot read properties of undefined (reading 'status')
+[2025-11-20T07:07:16.119Z] ERROR: Error en tickets/dashboard: statsArray is not defined
+[2025-11-20T07:07:16.294Z] ERROR: Error en tickets/dashboard: statsArray is not defined
+[2025-11-20T07:11:44.858Z] ERROR: Error en tickets/dashboard: Assignment to constant variable.
+[2025-11-20T07:11:45.119Z] ERROR: Error en tickets/dashboard: Assignment to constant variable.
+[2025-11-21T06:08:58.500Z] ERROR: Error al obtener tickets por Id: Unknown column 't.ticket_tipe_id' in 'on clause'
+[2025-11-21T06:08:58.591Z] ERROR: Error al obtener tickets por Id: Unknown column 't.ticket_tipe_id' in 'on clause'
+[2025-11-21T06:15:01.209Z] ERROR: Error al obtener tickets por Id: Unknown column 't.ticket_tipe_id' in 'on clause'
+[2025-11-21T06:15:01.293Z] ERROR: Error al obtener tickets por Id: Unknown column 't.ticket_tipe_id' in 'on clause'
+[2025-11-22T18:45:56.651Z] ERROR: Error creating ticket: Field 'zone' doesn't have a default value
+[2025-11-22T21:09:37.673Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:09:37.843Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:09:38.011Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:09:38.179Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:10:37.742Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:10:37.914Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:10:38.084Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:10:38.253Z] ERROR: Error en tickets/dashboard: json is not defined
+[2025-11-22T21:14:10.033Z] ERROR: Error en tickets/dashboard: req is not defined
+[2025-11-22T21:14:10.050Z] ERROR: Error en tickets/dashboard: req is not defined
+[2025-11-22T21:14:10.056Z] ERROR: Error en tickets/dashboard: req is not defined
+[2025-11-22T21:14:10.060Z] ERROR: Error en tickets/dashboard: req is not defined
+[2025-11-22T21:14:15.155Z] ERROR: Error en tickets/dashboard: req is not defined
+[2025-11-22T21:14:15.166Z] ERROR: Error en tickets/dashboard: req is not defined
+[2025-11-22T21:14:15.170Z] ERROR: Error en tickets/dashboard: req is not defined
+[2025-11-22T21:14:15.173Z] ERROR: Error en tickets/dashboard: req is not defined

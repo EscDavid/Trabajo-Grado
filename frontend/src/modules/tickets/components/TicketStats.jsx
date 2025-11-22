@@ -33,9 +33,9 @@ function StatsSkeleton() {
   );
 }
 
-export default function TicketStats({ ticketsByStatus, isLoading }) {
+export default function TicketStats({ ticketsByStatus, isLoadingStats }) {
   // Mostrar skeleton si está cargando o no hay datos
-  if (isLoading || !ticketsByStatus || ticketsByStatus.length === 0) {
+  if (isLoadingStats || !ticketsByStatus || ticketsByStatus.length === 0) {
     return <StatsSkeleton />;
   }
 

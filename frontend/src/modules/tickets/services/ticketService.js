@@ -11,10 +11,11 @@ const API_URL = `${import.meta.env.VITE_API_URL}/tickets`;
 
 export const createTicket = async (formData) => {
   try {
+    console.log(formData);
     const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData), // { email, subject, problemDescription }
+      body: JSON.stringify(formData), 
     });
 
     if (!res.ok) {
@@ -29,6 +30,16 @@ export const createTicket = async (formData) => {
   }
 };
 
+/*
+
+export const assignTickets = async (ticketIds, technicianIds) => {
+  const { data } = await api.post("/tickets/assign", {
+    ticketIds,
+    technicianIds,
+  });
+  return data;
+};
+*/
 
 /**
  * Obtener lista de tickets para el dashboard
@@ -70,6 +81,33 @@ export const getTicketById = async (ticketId) => {
     throw err;
   }
 };
+
+export const getTicketStats = async () => {
+  try {
+    const response = await fetch(`${API_URL}/stats`);
+
+    if (!response.ok) throw new Error("Error al obtener estadísticas de tickets");
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("[TicketService] Error obteniendo estadísticas de tickets:", err);
+    // Retornamos un objeto vacío por defecto similar a getTickets
+    return { totalTickets: 0, openTickets: 0, closedTickets: 0, pendingTickets: 0 };
+  }
+};
+
+export const getTicketTypes = async () => {
+  try {
+    const response = await fetch(`${API_URL}/ticketTypes`); 
+    if (!response.ok) throw new Error("Tipos de ticket no encontrados");
+    return await response.json();
+  } catch (err) {
+    console.error("[TicketService] Error obteniendo los tipos de tickets:", err);
+    throw err;
+  }
+};
+
 
 /**
  * Actualizar un ticket por ID
